@@ -1,0 +1,84 @@
+### -----------------------------------------
+### CRUD Tests (valid with dummy token)
+### -----------------------------------------
+
+### Create
+POST http://localhost:5200/api/users
+Authorization: Bearer dummy-token
+Content-Type: application/json
+
+{
+  "firstName": "Layla",
+  "lastName": "Hassan",
+  "email": "layla.hassan@techhive.local",
+  "department": "HR",
+  "role": "Coordinator",
+  "isActive": true
+}
+
+### List
+GET http://localhost:5200/api/users
+Authorization: Bearer dummy-token
+
+### Get by ID (replace GUID with actual ID from Create response)
+GET http://localhost:5200/api/users/3c6b7ee5-59f2-4d12-93ef-6189db5287d0
+Authorization: Bearer dummy-token
+
+### Update (replace GUID with actual ID)
+PUT http://localhost:5200/api/users/3c6b7ee5-59f2-4d12-93ef-6189db5287d0
+Authorization: Bearer dummy-token
+Content-Type: application/json
+
+{
+  "firstName": "Layla",
+  "lastName": "Hassan",
+  "email": "layla.hassan@techhive.local",
+  "department": "HR",
+  "role": "Lead",
+  "isActive": true
+}
+
+### Delete (replace GUID with actual ID)
+DELETE http://localhost:5200/api/users/3c6b7ee5-59f2-4d12-93ef-6189db5287d0
+Authorization: Bearer dummy-token
+
+
+### -----------------------------------------
+### Authentication Middleware Tests
+### -----------------------------------------
+
+### Missing token → should return 401 Unauthorized
+GET http://localhost:5200/api/users
+
+### Invalid token → should return 401 Unauthorized
+GET http://localhost:5200/api/users
+Authorization: Bearer wrong-token
+
+
+### -----------------------------------------
+### Error Handling Middleware Tests
+### -----------------------------------------
+
+### Invalid GUID format → triggers exception → returns 500 JSON error
+GET http://localhost:5200/api/users/not-a-guid
+Authorization: Bearer dummy-token
+
+### Non-existent GUID → returns 404 Not Found
+GET http://localhost:5200/api/users/11111111-1111-1111-1111-111111111111
+Authorization: Bearer dummy-token
+
+
+### -----------------------------------------
+### Validation Tests
+### -----------------------------------------
+
+### Invalid input (missing fields, bad email) → returns 400 Bad Request
+POST http://localhost:5200/api/users
+Authorization: Bearer dummy-token
+Content-Type: application/json
+
+{
+  "firstName": "",
+  "lastName": "",
+  "email": "not-an-email"
+}
